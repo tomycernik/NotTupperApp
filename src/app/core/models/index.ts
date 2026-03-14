@@ -56,10 +56,17 @@ export interface Vianda {
 export type PedidoEstado = 'PENDIENTE' | 'EN_PROCESO' | 'ENTREGADO' | 'CANCELADO';
 export type PedidoTamano = 'CHICA' | 'GRANDE';
 
+export interface PedidoExtra {
+  id?: string;
+  tipo: 'empanada' | 'pizza';
+  sabor: string;
+  cantidad: number;
+}
+
 export interface Pedido {
   id: string;
   usuario_id: string;
-  vianda_id: string;
+  vianda_id?: string;
   tamano: PedidoTamano;
   estado: PedidoEstado;
   observaciones?: string;
@@ -74,6 +81,7 @@ export interface Pedido {
     nombre: string;
     tipo: string;
   };
+  extras?: PedidoExtra[];
 }
 
 // ─── API Response ─────────────────────────────────────────────────────────────

@@ -24,13 +24,12 @@ import { Pedido, PedidoEstado } from '../../../core/models/index';
           <button class="btn btn--outline btn--sm" (click)="load()">↺ Actualizar</button>
         </div>
 
-        <!-- Filtros -->
         <div class="filter-bar">
           @for (f of estadoFilters; track f.value) {
             <button class="filter-btn" [class.active]="activeFilter() === f.value"
                     (click)="activeFilter.set(f.value)">
               {{ f.label }}
-              <span class="filter-btn__count">{{ countByEstado(f.value) }}</span>
+              <span class="filter-count">{{ countByEstado(f.value) }}</span>
             </button>
           }
         </div>
@@ -44,16 +43,29 @@ import { Pedido, PedidoEstado } from '../../../core/models/index';
                 <div class="pedido-row__main">
                   <div class="pedido-row__user">
                     <strong>{{ p.usuario?.nombre }} {{ p.usuario?.apellido }}</strong>
-                    <span class="pedido-row__meta">📍 {{ p.usuario?.zona }}</span>
-                    <span class="pedido-row__meta">📱 {{ p.usuario?.celular }}</span>
+                    <span class="meta">📍 {{ p.usuario?.zona }}</span>
+                    <span class="meta">📱 {{ p.usuario?.celular }}</span>
                   </div>
-                  <div class="pedido-row__vianda">
-                    <span class="vianda-name">🍱 {{ p.vianda?.nombre }}</span>
-                    @if (p.vianda) {
+
+                  @if (p.vianda) {
+                    <div class="pedido-row__vianda">
+                      <span class="vianda-name">🍱 {{ p.vianda.nombre }}</span>
                       <span class="badge" [class]="'badge--' + p.vianda.tipo.toLowerCase()">{{ p.vianda.tipo }}</span>
                       <span class="badge badge--chica">{{ p.tamano }}</span>
-                    }
-                  </div>
+                    </div>
+                  }
+
+                  @if (p.extras && p.extras.length > 0) {
+                    <div class="pedido-row__extras">
+                      @for (e of p.extras; track e.id) {
+                        <span class="extra-chip">
+                          {{ e.tipo === 'empanada' ? '🥟' : '🍕' }}
+                          {{ e.cantidad }}× {{ e.sabor }}
+                        </span>
+                      }
+                    </div>
+                  }
+
                   @if (p.observaciones) {
                     <p class="pedido-row__obs">📝 {{ p.observaciones }}</p>
                   }
@@ -74,9 +86,7 @@ import { Pedido, PedidoEstado } from '../../../core/models/index';
               </div>
             }
             @empty {
-              <div class="empty">
-                <p>No hay pedidos con este estado.</p>
-              </div>
+              <div class="empty"><p>No hay pedidos con este estado.</p></div>
             }
           </div>
         }
@@ -95,39 +105,36 @@ import { Pedido, PedidoEstado } from '../../../core/models/index';
       padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
       background: none; color: var(--text-muted); cursor: pointer;
       font-size: 0.85rem; font-weight: 700; font-family: var(--font-body); transition: all 0.15s;
-      &:hover { border-color: var(--gold); color: var(--text); }
-      &.active { background: var(--gold); color: #1a1a1a; border-color: var(--gold); }
-
-      &__count {
-        background: rgba(255,255,255,0.15);
-        border-radius: 10px; padding: 1px 7px; font-size: 0.75rem;
-        .active & { background: rgba(0,0,0,0.2); }
-      }
+    }
+    .filter-btn:hover { border-color: var(--gold); color: var(--text); }
+    .filter-btn.active { background: var(--gold); color: #1a1a1a; border-color: var(--gold); }
+    .filter-count {
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px; padding: 1px 7px; font-size: 0.75rem;
     }
 
     .pedidos-list { display: flex; flex-direction: column; gap: 10px; }
-
     .pedido-row {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: var(--radius-md); padding: 18px 20px;
       display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 20px; flex-wrap: wrap;
-      transition: border-color 0.2s;
-      &:hover { border-color: rgba(201,168,76,0.2); }
+      gap: 20px; flex-wrap: wrap; transition: border-color 0.2s;
     }
+    .pedido-row:hover { border-color: rgba(201,168,76,0.2); }
 
-    .pedido-row__main { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .pedido-row__main { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .pedido-row__user { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .pedido-row__user strong { font-size: 1rem; }
+    .meta { font-size: 0.82rem; color: var(--text-muted); }
 
-    .pedido-row__user {
-      display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
-      strong { font-size: 1rem; }
-    }
-    .pedido-row__meta { font-size: 0.82rem; color: var(--text-muted); }
-
-    .pedido-row__vianda {
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
+    .pedido-row__vianda { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .vianda-name { font-size: 0.9rem; font-weight: 700; color: var(--gold); }
+
+    .pedido-row__extras { display: flex; flex-wrap: wrap; gap: 6px; }
+    .extra-chip {
+      padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 700;
+      background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid rgba(201,168,76,0.2);
+    }
 
     .pedido-row__obs { font-size: 0.82rem; color: var(--text-muted); }
     .pedido-row__date { font-size: 0.78rem; color: var(--text-muted); }
@@ -139,8 +146,8 @@ import { Pedido, PedidoEstado } from '../../../core/models/index';
   `]
 })
 export class AdminPedidosComponent implements OnInit {
-  pedidos     = signal<Pedido[]>([]);
-  loading     = signal(true);
+  pedidos      = signal<Pedido[]>([]);
+  loading      = signal(true);
   activeFilter = signal<string>('TODOS');
 
   estadoFilters = [
