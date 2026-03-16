@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -29,14 +29,22 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
   template: `
     <div class="page">
 
+      <!-- TOAST "Ver tu pedido" -->
+      @if (mostrarToast()) {
+        <div class="toast" (click)="scrollAlPanel()">
+          🛒 Tu pedido te espera {{ esMobile() ? '↑ arriba' : '→ al costado' }}
+        </div>
+      }
+
       <!-- HERO -->
-      <header class="hero">
+      <header class="hero" #heroRef>
         <div class="hero__glow"></div>
         <div class="hero__inner">
           <div class="hero__brand">
             <span class="brand-not">NOT</span><span class="brand-tupper">TUPPER</span>
           </div>
-          <p class="hero__sub">Freezá tu semana con comida real 🍱</p>
+          <p class="hero__sub">Comida real, lista para tu semana 🍱</p>
+          <p class="hero__tagline">Pedís el miércoles · Recibís el finde · Freezás y listo</p>
           <div class="hero__chips">
             <div class="chip">
               <span class="chip__label">5 viandas · 300g</span>
@@ -58,8 +66,8 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
           <!-- VIANDAS -->
           <section class="block">
             <div class="block__head">
-              <h2 class="block__title">Menú de la semana</h2>
-              <p class="block__sub">Pedidos hasta el miércoles · Entrega el finde</p>
+              <h2 class="block__title">🍱 Menú de la semana</h2>
+              <p class="block__sub">Elegí tu vianda y armá tu semana — tocá para seleccionar</p>
             </div>
 
             @if (loading()) {
@@ -87,7 +95,6 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
                        [class.vianda-row--selected]="selectedVianda()?.id === v.id"
                        [style.animation-delay]="(i * 0.08) + 's'"
                        (click)="selectVianda(v)">
-
                     <div class="vianda-row__left">
                       <span class="tipo-pill" [class.tipo-pill--veg]="v.tipo === 'VEGETARIANA'">
                         {{ v.tipo === 'COMUN' ? '🍖 Común' : '🥦 Vegetariana' }}
@@ -104,15 +111,13 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
                         <p class="vianda-row__obs">{{ v.observaciones }}</p>
                       }
                     </div>
-
                     <div class="vianda-row__right">
                       @if (selectedVianda()?.id === v.id) {
                         <span class="tick" [class.tick--veg]="v.tipo === 'VEGETARIANA'">✓</span>
                       } @else {
-                        <span class="select-hint">Elegir</span>
+                        <span class="select-hint">Elegir →</span>
                       }
                     </div>
-
                   </div>
                 }
               </div>
@@ -122,12 +127,10 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
           <!-- EXTRAS -->
           <section class="block">
             <div class="block__head">
-              <h2 class="block__title">También podés pedir</h2>
-              <p class="block__sub">Empanadas y pizzas caseras · Se suman al pedido o se piden por separado</p>
+              <h2 class="block__title">🥟 También podés pedir</h2>
+              <p class="block__sub">Empanadas y pizzas caseras · Suman al pedido o se piden solos</p>
             </div>
-
             <div class="extras-grid">
-              <!-- EMPANADAS -->
               <div class="extra-block">
                 <div class="extra-block__head">
                   <span class="extra-block__emoji">🥟</span>
@@ -147,8 +150,6 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
                   </div>
                 }
               </div>
-
-              <!-- PIZZAS -->
               <div class="extra-block">
                 <div class="extra-block__head">
                   <span class="extra-block__emoji">🍕</span>
@@ -174,27 +175,27 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
         </div>
 
         <!-- PANEL STICKY -->
-        <aside class="col-aside">
-          <div class="panel" [class.panel--veg]="selectedVianda()?.tipo === 'VEGETARIANA'"
-               [class.panel--empty]="!selectedVianda() && !tieneExtras()">
+        <aside class="col-aside" #panelRef>
+          <div class="panel"
+               [class.panel--active]="selectedVianda() || tieneExtras()"
+               [class.panel--veg]="selectedVianda()?.tipo === 'VEGETARIANA'">
 
             @if (!selectedVianda() && !tieneExtras()) {
               <div class="panel__placeholder">
                 <p class="panel__placeholder-title">Tu pedido</p>
-                <p class="panel__placeholder-hint">Elegí una vianda o agregá extras para empezar</p>
+                <p class="panel__placeholder-hint">Elegí una vianda o sumá empanadas/pizzas para armar tu pedido</p>
               </div>
             } @else {
-              <h3 class="panel__title">Tu pedido</h3>
+              <h3 class="panel__title">Tu pedido 🛒</h3>
 
               @if (selectedVianda()) {
                 <div class="panel__section">
-                  <p class="panel__label">Vianda</p>
+                  <p class="panel__label">Vianda elegida</p>
                   <p class="panel__vianda-nombre">{{ selectedVianda()!.nombre }}</p>
                   <span class="tipo-pill" [class.tipo-pill--veg]="selectedVianda()!.tipo === 'VEGETARIANA'" style="font-size:0.7rem">
                     {{ selectedVianda()!.tipo === 'COMUN' ? '🍖 Común' : '🥦 Vegetariana' }}
                   </span>
-
-                  <p class="panel__label" style="margin-top:16px">Tamaño</p>
+                  <p class="panel__label" style="margin-top:16px">¿Cuánto querés?</p>
                   <div class="tamanos">
                     <button class="tam-btn" [class.tam-btn--active]="tamano() === 'CHICA'"
                             [class.tam-btn--veg]="selectedVianda()!.tipo === 'VEGETARIANA'"
@@ -227,27 +228,24 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
               }
 
               <div class="panel__total">
-                <span>Total</span>
+                <span>Total estimado</span>
                 <span class="panel__total-val">{{ "$" + totalEstimado().toLocaleString("es-AR") }}</span>
               </div>
 
               <div class="panel__section">
-                <p class="panel__label">Observaciones</p>
+                <p class="panel__label">Aclaraciones (opcional)</p>
                 <textarea class="panel__textarea" [(ngModel)]="observaciones"
                           placeholder="Sin sal, sin cebolla, alergia..."></textarea>
               </div>
 
-              <button class="btn-confirm" [disabled]="loadingPedido()"
+              <button class="btn-confirm"
                       [class.btn-confirm--veg]="selectedVianda()?.tipo === 'VEGETARIANA'"
+                      [disabled]="loadingPedido()"
                       (click)="confirmar()">
-                {{ loadingPedido() ? 'Enviando...' : '✅ Confirmar y enviar por WhatsApp' }}
+                {{ loadingPedido() ? 'Enviando...' : '💬 Confirmar y pedir por WhatsApp' }}
               </button>
 
-              <a [href]="whatsappConsultaUrl()" target="_blank" class="btn-consult">
-                💬 Solo consultar
-              </a>
-
-              <button class="btn-clear" (click)="cancelar()">Limpiar</button>
+              <button class="btn-clear" (click)="cancelar()">Limpiar selección</button>
 
               @if (feedbackMsg()) {
                 <div class="panel__feedback" [class.panel__feedback--ok]="feedbackOk()">
@@ -265,15 +263,28 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     :host {
       --gold: #c9a84c;
       --gold-dim: rgba(201,168,76,0.15);
-      --gold-glow: rgba(201,168,76,0.2);
       --veg: #6ab04c;
       --veg-dim: rgba(106,176,76,0.15);
-      --veg-glow: rgba(106,176,76,0.2);
       --bg: #0f0c08;
       --bg-card: #161210;
       --border: #252018;
       --text: #f0ece0;
       --muted: #7a7268;
+    }
+
+    /* ── Toast ───────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 999; background: var(--gold); color: #1a1209;
+      padding: 12px 24px; border-radius: 32px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.08em;
+      cursor: pointer; box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+      animation: slideUp 0.3s ease both;
+      white-space: nowrap;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
 
     /* ── Hero ─────────────────────────────────────────── */
@@ -300,11 +311,10 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     }
     .brand-not    { color: var(--text); }
     .brand-tupper { color: var(--gold); text-shadow: 0 0 30px rgba(201,168,76,0.3); }
-    .hero__sub {
-      color: var(--muted); font-size: 0.9rem; margin-top: 6px; letter-spacing: 0.05em;
-    }
+    .hero__sub { color: var(--text); font-size: 1rem; margin-top: 8px; font-weight: 700; }
+    .hero__tagline { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
     .hero__chips {
-      display: inline-flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center;
+      display: inline-flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center;
     }
     .chip {
       display: flex; align-items: center; gap: 10px;
@@ -316,7 +326,7 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     .chip__label { font-size: 0.78rem; color: var(--muted); font-weight: 700; letter-spacing: 0.06em; }
     .chip__price { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--gold); letter-spacing: 0.04em; }
 
-    /* ── Layout dos columnas ───────────────────────────── */
+    /* ── Layout ───────────────────────────────────────── */
     .layout {
       max-width: 1100px; margin: 0 auto;
       padding: 32px 32px 80px;
@@ -326,32 +336,25 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
       align-items: start;
     }
 
-    /* ── Bloques de sección ───────────────────────────── */
+    /* ── Bloques ──────────────────────────────────────── */
     .block { display: flex; flex-direction: column; gap: 20px; }
     .block + .block { margin-top: 40px; }
-    .block__head { }
-    .block__title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem; color: var(--text); letter-spacing: 0.06em;
-    }
+    .block__title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--text); letter-spacing: 0.06em; }
     .block__sub { color: var(--muted); font-size: 0.82rem; margin-top: 3px; }
 
-    /* ── Viandas lista ───────────────────────────────── */
+    /* ── Viandas ──────────────────────────────────────── */
     .viandas-list { display: flex; flex-direction: column; gap: 10px; }
-
     .vianda-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 20px; border-radius: 12px; cursor: pointer;
       border: 1.5px solid var(--border); background: var(--bg-card);
       transition: border-color 0.18s, background 0.18s, transform 0.12s;
-      animation: fadeUp 0.4s ease both;
-      gap: 16px;
+      animation: fadeUp 0.4s ease both; gap: 16px;
     }
     .vianda-row:hover { border-color: rgba(201,168,76,0.35); transform: translateX(3px); }
     .vianda-row--veg:hover { border-color: rgba(106,176,76,0.35); }
     .vianda-row--selected { border-color: var(--gold) !important; background: rgba(201,168,76,0.04) !important; }
     .vianda-row--selected.vianda-row--veg { border-color: var(--veg) !important; background: rgba(106,176,76,0.04) !important; }
-
     .vianda-row__left { flex: 1; min-width: 0; }
     .tipo-pill {
       display: inline-flex; align-items: center; gap: 4px;
@@ -360,90 +363,47 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
       background: var(--gold-dim); color: var(--gold); margin-bottom: 6px;
     }
     .tipo-pill--veg { background: var(--veg-dim); color: var(--veg); }
-    .vianda-row__nombre {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.25rem; color: var(--text); letter-spacing: 0.02em; line-height: 1.1;
-      margin-bottom: 4px;
-    }
-    .vianda-row__comidas {
-      font-size: 0.82rem; color: var(--muted); line-height: 1.5;
-    }
-    .vianda-row__obs {
-      font-size: 0.78rem; color: #5a5450; margin-top: 4px; font-style: italic;
-    }
+    .vianda-row__nombre { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: var(--text); letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 4px; }
+    .vianda-row__comidas { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .vianda-row__obs { font-size: 0.78rem; color: #5a5450; margin-top: 4px; font-style: italic; }
     .vianda-row__right { flex-shrink: 0; }
-    .tick {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--gold); color: #1a1209;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 0.9rem;
-    }
+    .tick { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: #1a1209; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.9rem; }
     .tick--veg { background: var(--veg); color: #0a150a; }
-    .select-hint {
-      font-size: 0.72rem; letter-spacing: 0.1em; color: #3a3530;
-      font-weight: 700; text-transform: uppercase;
-    }
+    .select-hint { font-size: 0.72rem; letter-spacing: 0.08em; color: #3a3530; font-weight: 700; }
 
-    /* ── Skeleton ────────────────────────────────────── */
+    /* ── Skeleton ─────────────────────────────────────── */
     .vianda-sk { padding: 20px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--bg-card); display: flex; flex-direction: column; gap: 10px; }
     .sk { border-radius: 6px; background: linear-gradient(90deg, #1e1a14 25%, #2a2418 50%, #1e1a14 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
 
-    /* ── Extras ──────────────────────────────────────── */
+    /* ── Extras ───────────────────────────────────────── */
     .extras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-    .extra-block {
-      border: 1.5px solid var(--border); border-radius: 12px;
-      background: var(--bg-card); overflow: hidden;
-    }
-    .extra-block__head {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 16px; border-bottom: 1px solid var(--border);
-      background: rgba(201,168,76,0.03);
-    }
+    .extra-block { border: 1.5px solid var(--border); border-radius: 12px; background: var(--bg-card); overflow: hidden; }
+    .extra-block__head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: rgba(201,168,76,0.03); }
     .extra-block__emoji { font-size: 1.5rem; }
     .extra-block__name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--text); letter-spacing: 0.04em; }
     .extra-block__price { font-size: 0.72rem; color: var(--gold); font-weight: 700; margin-top: 1px; }
-
-    .sabor-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 9px 16px; border-bottom: 1px solid #1a1710;
-    }
+    .sabor-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 16px; border-bottom: 1px solid #1a1710; }
     .sabor-row:last-child { border-bottom: none; }
     .sabor-row__name { font-size: 0.83rem; color: #b8b0a0; }
-
     .counter { display: flex; align-items: center; gap: 8px; }
-    .counter__btn {
-      width: 26px; height: 26px; border-radius: 6px;
-      border: 1px solid #2e2820; background: none;
-      color: var(--muted); font-size: 1rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.1s; line-height: 1;
-    }
+    .counter__btn { width: 26px; height: 26px; border-radius: 6px; border: 1px solid #2e2820; background: none; color: var(--muted); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; line-height: 1; }
     .counter__btn:hover { border-color: var(--gold); color: var(--gold); }
     .counter__btn--plus:hover { background: var(--gold-dim); }
     .counter__val { width: 18px; text-align: center; font-size: 0.88rem; font-weight: 700; color: var(--text); }
 
-    /* ── Panel aside ─────────────────────────────────── */
+    /* ── Panel ────────────────────────────────────────── */
     .col-aside { position: sticky; top: 80px; }
-
     .panel {
-      background: var(--bg-card); border: 1.5px solid var(--border);
+      background: var(--bg-card); border: 1.5px solid #1e1c18;
       border-radius: 16px; padding: 24px;
       display: flex; flex-direction: column; gap: 16px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    .panel--empty { border-color: #1e1c18; }
-    .panel:not(.panel--empty) { border-color: rgba(201,168,76,0.35); box-shadow: 0 0 24px rgba(201,168,76,0.05); }
-    .panel--veg:not(.panel--empty) { border-color: rgba(106,176,76,0.35); box-shadow: 0 0 24px rgba(106,176,76,0.05); }
+    .panel--active { border-color: rgba(201,168,76,0.4); box-shadow: 0 0 32px rgba(201,168,76,0.08); }
+    .panel--active.panel--veg { border-color: rgba(106,176,76,0.4); box-shadow: 0 0 32px rgba(106,176,76,0.08); }
 
-    .panel__placeholder {
-      text-align: center; padding: 28px 16px;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .panel__placeholder-title {
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
-      color: #3a3530; letter-spacing: 0.06em;
-    }
+    .panel__placeholder { text-align: center; padding: 28px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .panel__placeholder-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: #3a3530; letter-spacing: 0.06em; }
     .panel__placeholder-hint { color: #3a3530; font-size: 0.82rem; line-height: 1.5; }
 
     .panel__title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--text); letter-spacing: 0.05em; }
@@ -452,12 +412,7 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     .panel__vianda-nombre { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; color: var(--text); letter-spacing: 0.02em; margin-bottom: 6px; }
 
     .tamanos { display: flex; gap: 8px; margin-top: 2px; }
-    .tam-btn {
-      flex: 1; padding: 12px 8px; border-radius: 10px;
-      border: 1.5px solid var(--border); background: var(--bg);
-      cursor: pointer; transition: all 0.15s;
-      display: flex; flex-direction: column; align-items: center; gap: 1px;
-    }
+    .tam-btn { flex: 1; padding: 12px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 1px; }
     .tam-btn:hover { border-color: rgba(201,168,76,0.3); }
     .tam-btn--active { border-color: var(--gold) !important; background: rgba(201,168,76,0.06); }
     .tam-btn--active.tam-btn--veg { border-color: var(--veg) !important; background: rgba(106,176,76,0.06); }
@@ -469,74 +424,38 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     .panel__extra-row { display: flex; justify-content: space-between; font-size: 0.83rem; color: #b8b0a0; padding: 3px 0; }
     .panel__extra-price { color: var(--gold); font-weight: 700; }
 
-    .panel__total {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700;
-    }
+    .panel__total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
     .panel__total-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--gold); }
     .panel--veg .panel__total-val { color: var(--veg); }
 
-    .panel__textarea {
-      width: 100%; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); font-size: 0.83rem;
-      padding: 10px 12px; resize: none; height: 64px; outline: none;
-      font-family: 'Nunito', sans-serif; transition: border-color 0.15s;
-    }
+    .panel__textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.83rem; padding: 10px 12px; resize: none; height: 64px; outline: none; font-family: 'Nunito', sans-serif; transition: border-color 0.15s; }
     .panel__textarea:focus { border-color: var(--gold); }
     .panel__textarea::placeholder { color: #3a3530; }
 
-    .btn-confirm {
-      width: 100%; padding: 13px; border-radius: 8px; border: none;
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em;
-      cursor: pointer; transition: all 0.15s;
-      background: var(--gold); color: #1a1209;
-    }
+    .btn-confirm { width: 100%; padding: 14px; border-radius: 8px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s; background: var(--gold); color: #1a1209; }
     .btn-confirm:hover { filter: brightness(1.1); transform: translateY(-1px); }
     .btn-confirm--veg { background: var(--veg); color: #0a150a; }
     .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .btn-consult {
-      display: block; text-align: center; padding: 10px;
-      border-radius: 8px; border: 1px solid #2e2820;
-      color: var(--muted); font-size: 0.83rem; font-weight: 700;
-      text-decoration: none; transition: all 0.15s;
-    }
-    .btn-consult:hover { border-color: #4a4438; color: var(--text); }
-
-    .btn-clear {
-      width: 100%; padding: 8px; background: none; border: none;
-      color: #3a3530; font-size: 0.78rem; cursor: pointer;
-      font-family: 'Nunito', sans-serif; transition: color 0.15s;
-    }
+    .btn-clear { width: 100%; padding: 8px; background: none; border: none; color: #3a3530; font-size: 0.78rem; cursor: pointer; font-family: 'Nunito', sans-serif; transition: color 0.15s; }
     .btn-clear:hover { color: var(--muted); }
 
     .panel__feedback { padding: 10px 14px; border-radius: 8px; font-size: 0.83rem; font-weight: 700; background: rgba(224,80,80,0.1); color: #e05050; }
     .panel__feedback--ok { background: rgba(106,176,76,0.1); color: var(--veg); }
 
-    /* ── Empty ───────────────────────────────────────── */
+    /* ── Empty ────────────────────────────────────────── */
     .empty { text-align: center; padding: 48px 24px; }
     .empty__icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
     .empty__msg { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--muted); letter-spacing: 0.04em; }
     .empty__hint { font-size: 0.82rem; color: #4a4438; margin-top: 4px; }
 
-    /* ── Animaciones ─────────────────────────────────── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes shimmer {
-      0%   { background-position: -200% 0; }
-      100% { background-position:  200% 0; }
-    }
+    /* ── Animaciones ──────────────────────────────────── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
-    /* ── Mobile ──────────────────────────────────────── */
+    /* ── Mobile ───────────────────────────────────────── */
     @media (max-width: 768px) {
-      .layout {
-        grid-template-columns: 1fr;
-        padding: 24px 16px 60px;
-        gap: 0;
-      }
+      .layout { grid-template-columns: 1fr; padding: 24px 16px 80px; gap: 0; }
       .col-aside { position: static; order: -1; margin-bottom: 28px; }
       .extras-grid { grid-template-columns: 1fr; }
       .hero__inner { padding: 0 20px; }
@@ -554,9 +473,11 @@ export class MenuComponent implements OnInit {
   loadingPedido  = signal(false);
   feedbackMsg    = signal('');
   feedbackOk     = signal(false);
+  mostrarToast   = signal(false);
   observaciones  = '';
-
   extras: Record<string, number> = {};
+
+  private toastTimer: any;
 
   constructor(
     private viandaService: ViandaService,
@@ -572,24 +493,39 @@ export class MenuComponent implements OnInit {
     });
   }
 
-  selectVianda(v: Vianda): void {
-    this.selectedVianda.set(this.selectedVianda()?.id === v.id ? null : v);
-    this.feedbackMsg.set('');
+  esMobile(): boolean {
+    return window.innerWidth <= 768;
   }
 
-  getCantidad(tipo: string, sabor: string): number {
-    return this.extras[tipo + ':' + sabor] ?? 0;
+  selectVianda(v: Vianda): void {
+    const esMisma = this.selectedVianda()?.id === v.id;
+    this.selectedVianda.set(esMisma ? null : v);
+    this.feedbackMsg.set('');
+    if (!esMisma) this.mostrarToastTemporal();
   }
 
   incrementar(tipo: string, sabor: string): void {
     const key = tipo + ':' + sabor;
     this.extras = { ...this.extras, [key]: (this.extras[key] ?? 0) + 1 };
+    this.mostrarToastTemporal();
   }
 
   decrementar(tipo: string, sabor: string): void {
     const key = tipo + ':' + sabor;
     const cur = this.extras[key] ?? 0;
     if (cur > 0) this.extras = { ...this.extras, [key]: cur - 1 };
+  }
+
+  mostrarToastTemporal(): void {
+    this.mostrarToast.set(true);
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.mostrarToast.set(false), 4000);
+  }
+
+  scrollAlPanel(): void {
+    this.mostrarToast.set(false);
+    const panel = document.querySelector('.col-aside');
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   tieneExtras(): boolean {
@@ -608,9 +544,8 @@ export class MenuComponent implements OnInit {
   totalEstimado(): number {
     let total = 0;
     if (this.selectedVianda()) total += this.tamano() === 'CHICA' ? 35000 : 45000;
-    Object.entries(this.extras).filter(([,v]) => v > 0).forEach(([key, cant]) => {
-      const tipo = key.split(':')[0];
-      total += (tipo === 'empanada' ? 7500 : 10000) * cant;
+    Object.entries(this.extras).filter(([, v]) => v > 0).forEach(([key, cant]) => {
+      total += (key.startsWith('empanada') ? 7500 : 10000) * cant;
     });
     return total;
   }
@@ -620,47 +555,35 @@ export class MenuComponent implements OnInit {
     this.extras = {};
     this.observaciones = '';
     this.feedbackMsg.set('');
+    this.mostrarToast.set(false);
   }
 
   confirmar(): void {
     if (!this.auth.isLogged()) { this.router.navigate(['/auth/login']); return; }
     const v = this.selectedVianda();
-    if (v) {
-      this.loadingPedido.set(true);
-      const extrasArr: PedidoExtra[] = this.extrasSeleccionados().map(e => ({
-        tipo: e.tipo, sabor: e.sabor, cantidad: e.cantidad
-      }));
-      this.pedidoService.crear(v.id, this.tamano(), this.observaciones || undefined, extrasArr.length ? extrasArr : undefined).subscribe({
-        next: () => {
-          this.loadingPedido.set(false);
-          window.open(this.whatsappPedidoUrl(), '_blank');
-          this.cancelar();
-        },
-        error: () => {
-          this.loadingPedido.set(false);
-          this.feedbackMsg.set('❌ Hubo un error. Intentá de nuevo.');
-          this.feedbackOk.set(false);
-        }
-      });
-    } else {
-      // Solo extras sin vianda
-      const extrasArr: PedidoExtra[] = this.extrasSeleccionados().map(e => ({
-        tipo: e.tipo, sabor: e.sabor, cantidad: e.cantidad
-      }));
-      this.loadingPedido.set(true);
-      this.pedidoService.crear(null as any, 'CHICA', this.observaciones || undefined, extrasArr).subscribe({
-        next: () => {
-          this.loadingPedido.set(false);
-          window.open(this.whatsappPedidoUrl(), '_blank');
-          this.cancelar();
-        },
-        error: () => {
-          this.loadingPedido.set(false);
-          this.feedbackMsg.set('❌ Hubo un error. Intentá de nuevo.');
-          this.feedbackOk.set(false);
-        }
-      });
-    }
+    const extrasArr: PedidoExtra[] = this.extrasSeleccionados().map(e => ({
+      tipo: e.tipo, sabor: e.sabor, cantidad: e.cantidad
+    }));
+
+    this.loadingPedido.set(true);
+
+    const pedido$ = v
+      ? this.pedidoService.crear(v.id, this.tamano(), this.observaciones || undefined, extrasArr.length ? extrasArr : undefined)
+      : this.pedidoService.crear(null, 'CHICA', this.observaciones || undefined, extrasArr);
+
+    pedido$.subscribe({
+      next: () => {
+        this.loadingPedido.set(false);
+        const url = this.whatsappPedidoUrl();
+        window.location.href = url; // funciona en celular
+        this.cancelar();
+      },
+      error: () => {
+        this.loadingPedido.set(false);
+        this.feedbackMsg.set('❌ Hubo un error. Intentá de nuevo.');
+        this.feedbackOk.set(false);
+      }
+    });
   }
 
   whatsappPedidoUrl(): string {
@@ -681,15 +604,11 @@ export class MenuComponent implements OnInit {
     if (extras.length > 0) {
       msg += nl + '🥟 *Extras:*' + nl;
       extras.forEach(e => {
-        msg += '  · ' + e.cantidad + '× ' + (e.tipo === 'empanada' ? 'Empanada' : 'Pizza') + ' ' + e.sabor + ' ($' + (e.precio * e.cantidad).toLocaleString('es-AR') + ')' + nl;
+        msg += '  · ' + e.cantidad + 'x ' + (e.tipo === 'empanada' ? 'Empanada' : 'Pizza') + ' ' + e.sabor + ' ($' + (e.precio * e.cantidad).toLocaleString('es-AR') + ')' + nl;
       });
     }
     msg += nl + '💰 *Total:* $' + this.totalEstimado().toLocaleString('es-AR');
     if (this.observaciones) msg += nl + '📝 ' + this.observaciones;
     return 'https://wa.me/5491167353868?text=' + msg;
-  }
-
-  whatsappConsultaUrl(): string {
-    return 'https://wa.me/5491167353868?text=Hola%20NotTupper!%20Quiero%20consultar%20sobre%20el%20men%C3%BA%20%F0%9F%8D%B1';
   }
 }
