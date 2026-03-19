@@ -485,13 +485,7 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     @media (max-width: 768px) {
       /* Layout */
       .layout { grid-template-columns: 1fr; padding: 20px 16px 100px; gap: 24px; }
-      .col-aside { position: static; order: -1; }
-      /* Panel vacío en mobile: compacto y no invasivo */
-      .panel:not(.panel--active) { padding: 12px 16px; }
-      .panel:not(.panel--active) .panel__placeholder { flex-direction: row; padding: 8px 0; gap: 12px; text-align: left; align-items: center; }
-      .panel:not(.panel--active) .panel__placeholder-icon { font-size: 1.2rem; }
-      .panel:not(.panel--active) .panel__placeholder-title { font-size: 1rem; margin: 0; }
-      .panel:not(.panel--active) .panel__placeholder-hint { display: none; }
+      .col-aside { position: static; order: 2; }
       .extras-grid { grid-template-columns: 1fr; }
 
       /* Hero */
