@@ -658,13 +658,6 @@ export class MenuComponent implements OnInit {
     this.mostrarToast.set(true);
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => this.mostrarToast.set(false), 4000);
-    // En mobile, scrollear al panel después de un delay corto
-    if (this.esMobile()) {
-      setTimeout(() => {
-        const panel = document.querySelector('.col-aside');
-        if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 300);
-    }
   }
 
   isSelected(v: Vianda): boolean {
