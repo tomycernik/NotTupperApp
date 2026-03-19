@@ -475,20 +475,80 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
 
     /* ── Mobile ───────────────────────────────────────── */
     @media (max-width: 768px) {
-      .layout { grid-template-columns: 1fr; padding: 24px 16px 80px; gap: 0; }
-      .col-aside { position: static; order: -1; margin-bottom: 28px; }
+      /* Layout */
+      .layout { grid-template-columns: 1fr; padding: 20px 16px 100px; gap: 24px; }
+      .col-aside { position: static; order: 2; }
       .extras-grid { grid-template-columns: 1fr; }
+
+      /* Hero */
       .hero__inner { padding: 20px 16px 16px; }
-      .hero__chips { margin-bottom: 16px; }
-      .hero__scroll-btn { display: inline-flex; padding: 11px 28px; font-size: 0.95rem; }
-      .quienes__inner { grid-template-columns: 1fr; gap: 20px; padding: 0 20px; }
-      .quienes__right { flex-direction: row; justify-content: flex-start; }
-      .wsp-fab { bottom: 20px; right: 20px; width: 50px; height: 50px; }
-      .vianda-row__tamanos { flex-wrap: wrap; gap: 8px; }
-      .tam-mini { padding: 6px 10px; font-size: 0.75rem; }
-      .tam-mini__price { font-size: 0.62rem; }
-      .vianda-cnt { gap: 4px; }
-      .counter__btn { width: 24px; height: 24px; font-size: 0.9rem; }
+      .hero__chips { margin-bottom: 16px; gap: 8px; }
+      .hero__chips .chip { padding: 6px 14px; }
+      .chip__label { font-size: 0.72rem; }
+      .chip__price { font-size: 1rem; }
+      .hero__scroll-btn { padding: 11px 28px; font-size: 0.95rem; }
+
+      /* Quiénes somos */
+      .quienes__inner { grid-template-columns: 1fr; gap: 16px; padding: 0 16px; }
+      .quienes__right { flex-direction: row; justify-content: flex-start; gap: 24px; }
+
+      /* FAB */
+      .wsp-fab { bottom: 20px; right: 16px; width: 50px; height: 50px; }
+
+      /* Vianda row: en mobile se divide en 2 partes verticalmente */
+      .vianda-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+        cursor: default;
+      }
+      .vianda-row:hover { transform: none; }
+      .vianda-row__left { flex: 1; }
+      .vianda-row__comidas { white-space: normal; word-break: break-word; }
+      .vianda-row__nombre { white-space: normal; word-break: break-word; }
+
+      /* Botones tamaño: fila completa debajo del contenido */
+      .vianda-row__right { width: 100%; }
+      .vianda-row__tamanos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+      }
+      .tam-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: stretch;
+      }
+      .tam-mini {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+      }
+      .tam-mini__price { font-size: 0.72rem; }
+      .vianda-cnt {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 8px;
+        padding: 4px 8px;
+      }
+      .counter__btn { width: 28px; height: 28px; font-size: 1rem; }
+      .counter__val { font-size: 0.95rem; width: 24px; }
+
+      /* Panel */
+      .panel { padding: 18px; border-radius: 12px; }
+      .panel__placeholder { padding: 16px 12px; }
+      .panel__total-val { font-size: 1.4rem; }
+
+      /* Toast */
+      .toast { font-size: 0.9rem; padding: 10px 20px; bottom: 20px; }
     }
   `]
 })
