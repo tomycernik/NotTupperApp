@@ -297,7 +297,7 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
       <!-- TOAST -->
       @if (mostrarToast()) {
         <div class="toast" (click)="scrollAlPanel()">
-          🛒 Tu pedido {{ esMobile() ? '↑ arriba' : '→ al costado' }}
+          🛒 Tu pedido {{ esMobile() ? '↓ abajo' : '→ al costado' }}
         </div>
       }
 
