@@ -7,6 +7,7 @@ import { PedidoService } from '../../core/services/pedido.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Vianda, PedidoTamano } from '../../core/models/index';
 import { PedidoExtra } from '../../core/services/pedido.service';
+import { LogoComponent } from '../../shared/logo.component';
 
 interface ViandaSeleccionada {
   vianda: Vianda;
@@ -40,7 +41,7 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LogoComponent],
   template: `
     <div class="page">
 
@@ -48,8 +49,8 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
       <header class="hero">
         <div class="hero__glow"></div>
         <div class="hero__inner">
-          <div class="hero__brand">
-            <span class="brand-not">NOT</span><span class="brand-tupper">TUPPER</span>
+          <div class="hero__logo">
+            <app-logo variant="full" />
           </div>
           <p class="hero__claim">Abrís el freezer y ya tenés la comida resuelta.</p>
           <p class="hero__tagline">Pedís el miércoles · Recibís el finde · Freezás y listo</p>
@@ -313,24 +314,7 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
   `,
   styles: [`
     :host {
-      /* Map de tokens locales al sistema global */
-      --bg: var(--color-cream, #F2EBDF);
-      --bg-card: var(--color-white, #FFFFFF);
-      --bg-soft: var(--color-cream-soft, #FAF6EE);
-      --border: rgba(105, 115, 102, 0.22);
-      --border-soft: rgba(105, 115, 102, 0.12);
-      --text: var(--color-ink, #0C0D0D);
-      --muted: var(--color-sage, #697366);
-
-      /* Brand primary (antes --gold) */
-      --brand: var(--color-forest, #2E5935);
-      --brand-dark: var(--color-forest-dark, #1E3D23);
-      --brand-dim: rgba(46, 89, 53, 0.10);
-
-      /* Accent cálido: wheat */
-      --accent: var(--color-wheat, #D9BC9A);
-      --accent-dark: var(--color-wheat-dark, #C4A47E);
-      --accent-dim: rgba(217, 188, 154, 0.35);
+      /* Usa tokens globales de styles.scss para que el dark mode cascadee */
 
       /* Común = wheat (cálido, carne); Vegetariana = forest (planta) */
       --comun: var(--brand-dark);
@@ -350,11 +334,12 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
       position: relative;
       overflow: hidden;
       background: var(--bg);
-      /* Patrón gingham sutil — guiño al flyer */
+      /* Patrón geométrico más marcado en modo claro */
       background-image:
-        linear-gradient(45deg,  transparent 48%, rgba(217,188,154,0.18) 48% 52%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, rgba(217,188,154,0.18) 48% 52%, transparent 52%);
-      background-size: 48px 48px;
+        linear-gradient(45deg,  transparent 47%, rgba(217,188,154,0.28) 47% 53%, transparent 53%),
+        linear-gradient(-45deg, transparent 47%, rgba(217,188,154,0.28) 47% 53%, transparent 53%),
+        radial-gradient(circle at center, rgba(217,188,154,0.08) 0 1px, transparent 1px);
+      background-size: 42px 42px, 42px 42px, 42px 42px;
       border-bottom: 1px solid var(--border-soft);
     }
     .hero__glow {
@@ -367,14 +352,10 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
       padding: 48px 32px 32px;
       text-align: center;
     }
-    .hero__brand {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3rem, 8vw, 5.5rem);
-      letter-spacing: 0.03em; line-height: 1;
-      display: inline-flex; gap: 4px;
+    .hero__logo {
+      display: flex; justify-content: center;
+      margin-bottom: 4px;
     }
-    .brand-not    { color: var(--text); }
-    .brand-tupper { color: var(--brand); }
 
     .hero__claim {
       color: var(--text);
@@ -888,6 +869,85 @@ const PIZZAS = ['Queso', 'Queso y cebolla'];
     }
     .empty__hint {
       font-size: 0.88rem; color: var(--muted); margin-top: 6px;
+    }
+
+    /* ── Dark mode overrides (cosas que el cascade de tokens no resuelve sola) ── */
+    :host-context(.dark-mode) .hero__glow {
+      background:
+        radial-gradient(ellipse 70% 90% at 50% -5%, rgba(102, 194, 123, 0.26) 0%, rgba(102, 194, 123, 0.08) 45%, transparent 75%),
+        radial-gradient(ellipse 80% 100% at 50% 0%, rgba(228, 197, 155, 0.14) 0%, transparent 70%);
+    }
+    :host-context(.dark-mode) .hero {
+      background-image:
+        linear-gradient(45deg,  transparent 48%, rgba(102,194,123,0.11) 48% 52%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(228,197,155,0.12) 48% 52%, transparent 52%);
+    }
+    :host-context(.dark-mode) .block__title,
+    :host-context(.dark-mode) .panel__title,
+    :host-context(.dark-mode) .quienes__title {
+      text-shadow: 0 2px 16px rgba(73, 163, 93, 0.2);
+    }
+
+    :host-context(.dark-mode) .tipo-pill {
+      color: var(--color-cream);
+      border: 1px solid rgba(199, 187, 167, 0.26);
+    }
+
+    :host-context(.dark-mode) .chip--outline {
+      background: rgba(35, 42, 34, 0.74);
+      border-color: rgba(228, 197, 155, 0.66);
+    }
+    :host-context(.dark-mode) .chip--outline .chip__label,
+    :host-context(.dark-mode) .chip--outline .chip__price {
+      color: var(--accent);
+    }
+
+    :host-context(.dark-mode) .extra-block__head {
+      background: linear-gradient(135deg, rgba(73, 163, 93, 0.22), rgba(228, 197, 155, 0.18));
+      border-bottom-color: rgba(199, 187, 167, 0.22);
+    }
+
+    :host-context(.dark-mode) .panel,
+    :host-context(.dark-mode) .extra-block,
+    :host-context(.dark-mode) .vianda-row--veg {
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    :host-context(.dark-mode) .vianda-row--veg {
+      border-color: rgba(105, 194, 126, 0.42);
+    }
+
+    :host-context(.dark-mode) .tam-mini {
+      background: rgba(35, 42, 34, 0.9);
+      border-color: rgba(105, 194, 126, 0.45);
+      color: var(--text);
+    }
+    :host-context(.dark-mode) .tam-mini__price {
+      color: var(--accent);
+    }
+    :host-context(.dark-mode) .counter__btn {
+      background: rgba(35, 42, 34, 0.9);
+      border-color: rgba(199, 187, 167, 0.32);
+      color: var(--text);
+    }
+
+    :host-context(.dark-mode) .quienes__ig {
+      background: rgba(35, 42, 34, 0.88);
+      border-color: rgba(105, 194, 126, 0.4);
+      color: var(--accent);
+    }
+    :host-context(.dark-mode) .quienes__ig:hover {
+      background: rgba(73, 163, 93, 0.18);
+      border-color: var(--brand-soft);
+      color: var(--text);
+    }
+
+    :host-context(.dark-mode) .sk {
+      background: linear-gradient(90deg,
+        var(--bg-card) 25%,
+        rgba(199, 187, 167, 0.18) 50%,
+        var(--bg-card) 75%);
+      background-size: 200% 100%;
     }
 
     /* ── Animaciones ──────────────────────────────────── */

@@ -3,18 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { LogoComponent } from '../../shared/logo.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LogoComponent],
   template: `
     <div class="auth-page">
       <div class="auth-card">
-        <div class="auth-brand">
-          <span class="auth-brand__not">NOT</span><span class="auth-brand__tupper">TUPPER</span>
+        <div class="auth-logo">
+          <app-logo variant="full" />
         </div>
-        <p class="auth-sub">FREEZÁ TU SEMANA</p>
         <h2 class="auth-title">Crear cuenta</h2>
 
         <div class="auth-form">
@@ -84,18 +84,9 @@ import { AuthService } from '../../core/services/auth.service';
       box-shadow: 0 12px 40px rgba(12, 13, 13, 0.10);
     }
 
-    .auth-brand {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.6rem; letter-spacing: 0.06em;
-      text-align: center; line-height: 1; margin-bottom: 4px;
-    }
-    .auth-brand__not    { color: var(--color-ink, #0C0D0D); }
-    .auth-brand__tupper { color: var(--color-forest, #2E5935); }
-
-    .auth-sub {
-      text-align: center; font-size: 0.7rem; letter-spacing: 0.3em;
-      color: var(--color-sage, #697366);
-      font-weight: 700; margin-bottom: 32px;
+    .auth-logo {
+      display: flex; justify-content: center;
+      margin-bottom: 28px;
     }
 
     .auth-title {

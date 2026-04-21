@@ -44,6 +44,14 @@
   --danger:   #B3443A;              // rojo terroso, no UI-red
   --success:  var(--color-forest);
 
+  /* ── Terracota: único color fuera de la paleta del flyer; viene del logo ── */
+  --color-terracotta:      #D96842;
+  --color-terracotta-dark: #B8512F;
+  --color-terracotta-soft: #E8876A;
+
+  /* ── Token del wordmark del logo (cream en dark, forest en light) ── */
+  --logo-wordmark: var(--brand);
+
   /* ── Legacy aliases: admin/código viejo siguen pintando bien ── */
   --gold:       var(--brand);
   --gold-light: var(--brand-soft);
@@ -293,4 +301,72 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DARK MODE — warm farmhouse-at-night
+// ═══════════════════════════════════════════════════════════════════════════
+// Filosofía: dark mode con más presencia visual y contraste, sin perder
+// la identidad de marca forest + wheat.
+
+.dark-mode {
+  /* Fondos: noche olivada, menos "apagado" que charcoal puro */
+  --bg:          #191D18;
+  --bg-card:     #232A22;
+  --bg-elevated: #2D362B;
+  --bg-accent:   #E4C59B;
+
+  /* Texto: cream más brillante y muted más legible */
+  --text:           #F8F2E7;
+  --text-muted:     #C7BBA7;
+  --text-on-brand:  var(--color-cream);
+
+  /* Borders: más presentes para separar superficies */
+  --border:        rgba(199, 187, 167, 0.24);
+  --border-soft:   rgba(199, 187, 167, 0.12);
+  --border-strong: #C7BBA7;
+
+  /* Marca: empujada en luminosidad para que destaque en dark */
+  --brand:       #49A35D;
+  --brand-dark:  #2E7A43;
+  --brand-soft:  #69C27E;
+  --brand-dim:   rgba(73, 163, 93, 0.22);
+
+  /* Acento wheat: más cálido/luminoso sobre fondos oscuros */
+  --accent:      #E4C59B;
+  --accent-dark: #D3AE80;
+  --accent-dim:  rgba(228, 197, 155, 0.30);
+
+  /* Danger: levantado para contraste en dark */
+  --danger:  #E07D70;
+  --success: var(--brand);
+
+  /* Logo wordmark: pasa a cream */
+  --logo-wordmark: var(--color-cream);
+
+  /* Sombras: profundas + leve tinte de marca */
+  --shadow-sm: 0 1px 2px  rgba(0, 0, 0, 0.34);
+  --shadow:    0 4px 16px rgba(0, 0, 0, 0.42);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 42px rgba(0, 0, 0, 0.58);
+}
+
+/* Transición suave al togglear */
+html, body,
+.dark-mode, .dark-mode body {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Scrollbar thumb adaptado */
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: rgba(163, 155, 141, 0.30);
+}
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.dark-mode body {
+  background-image:
+    radial-gradient(1200px 600px at 85% -15%, rgba(73, 163, 93, 0.16), transparent 60%),
+    radial-gradient(900px 500px at -5% 0%, rgba(228, 197, 155, 0.08), transparent 65%);
 }
