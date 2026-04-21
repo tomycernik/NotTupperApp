@@ -454,3 +454,220 @@ html, body,
     var(--bg-card) 75%);
   background-size: 200% 100%;
 }
+
+app-menu .page { background: var(--bg); min-height: 100vh; }
+
+app-menu .hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  background-image:
+    linear-gradient(45deg, transparent 47%, rgba(217,188,154,0.28) 47% 53%, transparent 53%),
+    linear-gradient(-45deg, transparent 47%, rgba(217,188,154,0.28) 47% 53%, transparent 53%),
+    radial-gradient(circle at center, rgba(217,188,154,0.08) 0 1px, transparent 1px);
+  background-size: 42px 42px, 42px 42px, 42px 42px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+app-menu .hero__glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(242,235,223,0.9) 0%, rgba(242,235,223,0.3) 60%, transparent 100%);
+}
+
+app-menu .hero__inner {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto;
+  padding: 48px 32px 32px;
+  text-align: center;
+}
+
+app-menu .hero__logo { display: flex; justify-content: center; margin-bottom: 4px; }
+
+app-menu .hero__claim {
+  color: var(--text);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 700; margin-top: 14px;
+}
+
+app-menu .hero__tagline { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+
+app-menu .hero__chips {
+  display: flex; gap: 10px; margin-top: 20px;
+  flex-wrap: wrap; justify-content: center; margin-bottom: 28px;
+}
+
+app-menu .chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 22px; border-radius: 32px;
+  background: var(--accent);
+  color: var(--brand-dark);
+  border: 1.5px solid transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+app-menu .chip--outline { background: var(--bg-card); border-color: var(--accent); }
+
+app-menu .chip__label {
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--brand-dark);
+}
+
+app-menu .chip__price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem; letter-spacing: 0.04em;
+  color: var(--brand);
+}
+
+app-menu .chip--outline .chip__label { color: var(--brand); }
+
+app-menu .hero__scroll-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 0; padding: 13px 34px; border-radius: 32px;
+  background: var(--brand); color: var(--color-cream, #F2EBDF);
+  border: none; cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem; letter-spacing: 0.1em;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+
+app-menu .hero__scroll-btn:hover { background: var(--brand-dark); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+app-menu .hero__scroll-arrow { animation: bounce 1.2s infinite; display: inline-block; }
+
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+app-menu .quienes {
+  border-top: 1px solid var(--border-soft);
+  background: var(--bg-soft);
+  padding: 36px 0;
+}
+
+app-menu .quienes__inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 32px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 40px; align-items: center;
+}
+
+app-menu .quienes__label {
+  font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--brand); margin-bottom: 8px;
+}
+
+app-menu .quienes__title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem; color: var(--text);
+  letter-spacing: 0.04em; margin-bottom: 10px;
+}
+
+app-menu .quienes__desc {
+  color: var(--muted);
+  font-size: 0.95rem; line-height: 1.65;
+  max-width: 520px; margin-bottom: 18px;
+}
+
+app-menu .quienes__checks { display: flex; flex-direction: column; gap: 6px; }
+app-menu .check-item { font-size: 0.9rem; color: var(--text); }
+
+app-menu .quienes__right {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 18px;
+}
+
+app-menu .quienes__stat { text-align: center; }
+
+app-menu .quienes__stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem; color: var(--brand);
+  display: block; line-height: 1;
+}
+
+app-menu .quienes__stat-label {
+  font-size: 0.72rem; color: var(--muted);
+  font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+app-menu .quienes__ig {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--brand); font-size: 0.85rem; font-weight: 700;
+  text-decoration: none; transition: all 0.15s;
+}
+
+app-menu .quienes__ig:hover { border-color: var(--brand); background: var(--brand-dim); }
+
+app-menu .layout {
+  max-width: 1100px; margin: 0 auto;
+  padding: 40px 32px 80px;
+  display: grid; grid-template-columns: 1fr 320px;
+  gap: 32px; align-items: start;
+}
+
+app-menu .block { display: flex; flex-direction: column; gap: 20px; }
+app-menu .block + .block { margin-top: 40px; }
+app-menu .block__title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; color: var(--text);
+  letter-spacing: 0.06em;
+}
+app-menu .block__sub { color: var(--muted); font-size: 0.88rem; margin-top: 3px; }
+
+@media (max-width: 768px) {
+  app-menu .layout { grid-template-columns: 1fr; padding: 20px 16px 100px; gap: 24px; }
+  app-menu .col-aside { position: static; order: 2; }
+  app-menu .extras-grid { grid-template-columns: 1fr; }
+
+  app-menu .hero__inner { padding: 28px 16px 20px; }
+  app-menu .hero__chips { margin-bottom: 18px; gap: 8px; }
+  app-menu .hero__chips .chip { padding: 7px 16px; }
+  app-menu .chip__label { font-size: 0.75rem; }
+  app-menu .chip__price { font-size: 1.05rem; }
+  app-menu .hero__scroll-btn { padding: 11px 28px; font-size: 0.95rem; }
+
+  app-menu .quienes__inner { grid-template-columns: 1fr; gap: 18px; padding: 0 16px; }
+  app-menu .quienes__right { flex-direction: row; justify-content: flex-start; gap: 24px; }
+
+  app-menu .wsp-fab { bottom: 20px; right: 16px; width: 52px; height: 52px; }
+
+  app-menu .vianda-row {
+    flex-direction: column; align-items: stretch;
+    gap: 14px; padding: 18px;
+    cursor: default;
+  }
+  app-menu .vianda-row:hover { transform: none; }
+  app-menu .vianda-row__left { flex: 1; }
+  app-menu .vianda-row__comidas,
+  app-menu .vianda-row__nombre { white-space: normal; word-break: break-word; }
+
+  app-menu .vianda-row__right { width: 100%; }
+  app-menu .vianda-row__tamanos {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; width: 100%;
+  }
+  app-menu .tam-group {
+    display: flex; flex-direction: column;
+    gap: 6px; align-items: stretch;
+  }
+  app-menu .tam-mini {
+    width: 100%; flex-direction: row; justify-content: space-between;
+    padding: 11px 15px; font-size: 0.85rem;
+  }
+  app-menu .tam-mini__price { font-size: 0.75rem; }
+  app-menu .vianda-cnt {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; background: var(--bg-soft);
+    border-radius: 8px; padding: 5px 8px;
+  }
+  app-menu .counter__btn { width: 30px; height: 30px; font-size: 1rem; }
+  app-menu .counter__val { font-size: 0.98rem; width: 26px; }
+
+  app-menu .panel { padding: 18px; border-radius: 14px; }
+  app-menu .panel__placeholder { padding: 18px 12px; }
+  app-menu .panel__total-val { font-size: 1.5rem; }
+
+  app-menu .toast { font-size: 0.92rem; padding: 11px 22px; bottom: 20px; }
+}
