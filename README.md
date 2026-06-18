@@ -1,58 +1,45 @@
-# 🍱 NotTupper — App (Angular 18)
+# NotTupper App
 
-Frontend Angular para el emprendimiento de viandas saludables.
+Frontend Angular para venta de viandas caseras freezadas.
 
-## 🚀 Instalación
+## Objetivo
 
-```bash
+Permitir que el cliente vea el menú semanal, seleccione packs de viandas/extras y arme un mensaje de WhatsApp para confirmar el pedido.
+
+## Scripts
+
 npm install
-ng serve         # dev → http://localhost:4200
-ng build         # prod → dist/
-```
+npm start
+npm run build
 
-## 🔧 Configuración
+## URLs locales
 
-Editá `src/environments/environment.ts` con la URL de tu API:
+App: http://localhost:4200
+API: http://localhost:3000/api
 
-```ts
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:3000/api',
-};
-```
+## Flujo de pedido
 
-## 📱 Pantallas
+1. El cliente entra al menú.
+2. Selecciona viandas 300g o 500g.
+3. Puede sumar extras.
+4. Agrega observaciones.
+5. Toca “Armar mensaje de WhatsApp”.
+6. El pedido se confirma al enviar el mensaje.
 
-| Ruta | Descripción | Auth |
-|------|-------------|------|
-| `/` | Menú activo — elegir vianda y pedir | Pública |
-| `/auth/login` | Login | Pública |
-| `/auth/register` | Registro | Pública |
-| `/admin` | Dashboard admin | ADMIN |
-| `/admin/viandas` | Crear/editar viandas y asignar comidas | ADMIN |
-| `/admin/comidas` | Catálogo de platos reutilizables | ADMIN |
-| `/admin/pedidos` | Ver y gestionar pedidos | ADMIN |
+No hace falta iniciar sesión para pedir por WhatsApp.
+El login queda para historial, usuario y admin.
 
-## 🏗️ Arquitectura
+## Configuración
 
-```
-src/app/
-├── core/
-│   ├── models/        → Interfaces TypeScript
-│   ├── services/      → auth, vianda, comida, pedido
-│   ├── guards/        → authGuard, adminGuard, guestGuard
-│   └── interceptors/  → JWT en headers automático
-├── features/
-│   ├── menu/          → Página principal pública
-│   ├── auth/          → Login + Registro
-│   └── admin/         → Dashboard + Viandas + Comidas + Pedidos
-└── environments/      → dev / prod
-```
+La URL de la API se define en:
 
-## 🎨 Design
+- `src/environments/environment.ts`
+- `src/environments/environment.prod.ts`
 
-- Fondo oscuro `#1a1a1a` + dorado `#c9a84c`
-- **Bebas Neue** para títulos (igual que el logo)
-- **Nunito** para cuerpo
-- Componentes standalone (Angular 18)
-- Signals para estado reactivo
+## Rutas principales
+
+- `/` — Menú público y pedido por WhatsApp
+- `/mis-pedidos` — Historial del usuario
+- `/auth/login` — Login
+- `/auth/register` — Registro
+- `/admin` — Panel administrador

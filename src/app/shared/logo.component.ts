@@ -17,40 +17,47 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="logo logo--{{ variant }}" [class.logo--light]="light" [attr.aria-label]="'NotTupper'">
-      <svg class="logo__leaves"
-           viewBox="-42 -60 84 66"
-           fill="none" stroke="currentColor"
-           stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
-           aria-hidden="true">
-        <!-- Hoja central (más grande y generosa) -->
-        <path d="M 0 -2
-                 C 11 -16, 11 -40, 0 -54
-                 C -11 -40, -11 -16, 0 -2 Z" />
-        <!-- Hoja izquierda (rotada -30°) -->
-        <g transform="rotate(-30)">
-          <path d="M 0 0
-                   C 7 -14, 7 -32, 0 -44
-                   C -7 -32, -7 -14, 0 0 Z" />
-        </g>
-        <!-- Hoja derecha (espejo) -->
-        <g transform="rotate(30)">
-          <path d="M 0 0
-                   C 7 -14, 7 -32, 0 -44
-                   C -7 -32, -7 -14, 0 0 Z" />
-        </g>
-      </svg>
+      <ng-container *ngIf="src; else svgTemplate">
+        <img class="logo__image" [src]="src" alt="NotTupper logo" />
+      </ng-container>
 
-      @if (variant !== 'icon') {
-        <div class="logo__wordmark">
-          @if (variant === 'full') {
-            <span class="logo__not">NOT</span>
-            <span class="logo__tupper">TUPPER</span>
-            <span class="logo__tagline">FREEZA TU SEMANA</span>
-          } @else {
-            <span class="logo__not-inline">NOT</span><span class="logo__tupper-inline">TUPPER</span>
-          }
-        </div>
-      }
+      <ng-template #svgTemplate>
+        <svg class="logo__leaves"
+             viewBox="-42 -60 84 66"
+             fill="none" stroke="currentColor"
+             stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <!-- Hoja central (más grande y generosa) -->
+          <path d="M 0 -2
+                   C 11 -16, 11 -40, 0 -54
+                   C -11 -40, -11 -16, 0 -2 Z" />
+          <!-- Hoja izquierda (rotada -30°) -->
+          <g transform="rotate(-30)">
+            <path d="M 0 0
+                     C 7 -14, 7 -32, 0 -44
+                     C -7 -32, -7 -14, 0 0 Z" />
+          </g>
+          <!-- Hoja derecha (espejo) -->
+          <g transform="rotate(30)">
+            <path d="M 0 0
+                     C 7 -14, 7 -32, 0 -44
+                     C -7 -32, -7 -14, 0 0 Z" />
+          </g>
+        </svg>
+
+        <ng-container *ngIf="variant !== 'icon'">
+          <div class="logo__wordmark">
+            <ng-container *ngIf="variant === 'full'; else inlineWordmark">
+              <span class="logo__not">NOT</span>
+              <span class="logo__tupper">TUPPER</span>
+              <span class="logo__tagline">FREEZA TU SEMANA</span>
+            </ng-container>
+            <ng-template #inlineWordmark>
+              <span class="logo__not-inline">NOT</span><span class="logo__tupper-inline">TUPPER</span>
+            </ng-template>
+          </div>
+        </ng-container>
+      </ng-template>
     </div>
   `,
   styles: [`
@@ -122,10 +129,21 @@ import { CommonModule } from '@angular/common';
 
     /* ─── icon ─── sólo las hojas */
     .logo--icon .logo__leaves { width: 32px; height: 32px; }
+    /* Imagen real del logo (fallback al svg) */
+    .logo__image { display: block; object-fit: contain; }
+    .logo--inline .logo__image { width: 84px; height: auto; }
+    .logo--full .logo__image {
+      width: clamp(120px, 20vw, 280px);
+      height: auto;
+      margin-bottom: 4px;
+    }
+    .logo--icon .logo__image { width: 40px; height: 40px; }
   `]
 })
 export class LogoComponent {
   @Input() variant: 'icon' | 'inline' | 'full' = 'inline';
   /** Fuerza el wordmark a cream (útil sobre fondos oscuros como el navbar forest). */
   @Input() light = false;
+  /** Ruta opcional a una imagen real del logo. Si queda vacío, se usa el SVG del componente. */
+  @Input() src: string = '';
 }
